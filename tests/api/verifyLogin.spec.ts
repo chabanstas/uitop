@@ -37,7 +37,7 @@ test.describe('POST /verifyLogin', () => {
     const response = await request.post(`${BASE_URL}/verifyLogin`, {
       form: {
         email: faker.internet.email(),
-        password: faker.internet.password(),
+        // password: faker.internet.password(),
       },
     });
 

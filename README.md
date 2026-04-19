@@ -24,7 +24,7 @@ uitop/
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) v20+ (see `.nvmrc`)
+- [Node.js](https://nodejs.org/) v24+ (see `.nvmrc`)
 - npm v9+
 
 ---
@@ -86,15 +86,42 @@ Each test generates a unique user via `generateValidUser()` (faker-based). An `a
 
 ---
 
+## Docker
+
+Run tests in an isolated, reproducible container without installing Node locally.
+
+```bash
+# Build image and run tests
+docker compose up --build
+
+# View the HTML report after tests finish
+npx playwright show-report
+```
+
+The container installs dependencies, runs `npm run test:api`, and exits. The HTML report is written to `./playwright-report` on your machine via a volume mount.
+
+---
+
 ## CI – GitHub Actions
 
-Tests run automatically on every push and pull request to `main`/`master`.
+### Docker workflow (primary)
+
+**Workflow:** [.github/workflows/docker.yml](.github/workflows/docker.yml)
+
+Runs on every push and pull request to `main`/`master`.
+
+| Job | Description |
+|-----|-------------|
+| `test` | Builds the Docker image and runs `npm run test:api` inside the container |
+| `deploy` | Publishes the Playwright HTML report to GitHub Pages (push to `main`/`master` only) |
+
+The live report is available at your repository's GitHub Pages URL after each push to the main branch.
+
+### Node workflow (legacy)
 
 **Workflow:** [.github/workflows/playwright.yml](.github/workflows/playwright.yml)
 
-- Job: `api-tests`
-- Runs: `npm run test:api`
-- Uploads the HTML report as an artifact (`api-test-report`, retained 30 days)
+Runs tests directly on the runner (no Docker). Uploads the HTML report as a workflow artifact retained for 30 days.
 
 The E2E browser job is scaffolded in the workflow but currently disabled — the staging environment is not available for automated UI testing at this time.
 

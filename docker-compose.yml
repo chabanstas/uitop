@@ -1,0 +1,7 @@
+services:
+  api-tests:
+    build: .
+    environment:
+      - CI=true
+    volumes:
+      - ./playwright-report:/app/playwright-report

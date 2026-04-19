@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { generateValidUser, ValidUser } from '../../fixtures/apiUsers';
-import { assertApiResponse } from '../../utils/apiHelpers';
+import { generateValidUser, ValidUser } from 'fixtures/apiUsers';
+import { assertApiResponse } from 'utils/apiHelpers';
 
 const BASE_URL = 'https://automationexercise.com/api';
 

@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { assertApiResponse } from '../../utils/apiHelpers';
+import { assertApiResponse } from 'utils/apiHelpers';
 import { faker } from '@faker-js/faker';
 
 const BASE_URL = 'https://automationexercise.com/api';

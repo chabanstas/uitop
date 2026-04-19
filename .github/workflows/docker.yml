@@ -2,9 +2,9 @@ name: API Tests in Docker
 
 on:
   push:
-    branches: [main, master]
+    branches: [ main, master ]
   pull_request:
-    branches: [main, master]
+    branches: [ main, master ]
 
 permissions:
   contents: read
@@ -32,17 +32,3 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report/
-
-  deploy:
-    name: Publish Report to GitHub Pages
-    needs: test
-    if: ${{ !cancelled() && github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

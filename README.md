@@ -24,7 +24,7 @@ uitop/
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) v20+ (see `.nvmrc`)
+- [Node.js](https://nodejs.org/) v24+ (see `.nvmrc`)
 - npm v9+
 
 ---

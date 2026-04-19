@@ -86,6 +86,22 @@ Each test generates a unique user via `generateValidUser()` (faker-based). An `a
 
 ---
 
+## Docker
+
+Run tests in an isolated, reproducible container without installing Node locally.
+
+```bash
+# Build image and run tests
+docker compose up --build
+
+# View the HTML report after tests finish
+npx playwright show-report
+```
+
+The container installs dependencies, runs `npm run test:api`, and exits. The HTML report is written to `./playwright-report` on your machine via a volume mount.
+
+---
+
 ## CI – GitHub Actions
 
 Tests run automatically on every push and pull request to `main`/`master`.

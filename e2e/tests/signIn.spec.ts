@@ -3,11 +3,15 @@ import { Home } from '../pages/Home';
 import { de, faker } from '@faker-js/faker';
 import Flash from 'e2e/pages/Flash';
 import { users } from 'fixtures/fixtures';
+import assert from 'assert';
 
 test.describe('Sign In', () => {
   // test.describe.configure({ mode: 'serial' });
-  const email = process.env.TEST_USER_EMAIL || '';
-  const password = process.env.TEST_USER_PASSWORD || '';
+  const email = process.env.TEST_USER_EMAIL;
+  const password = process.env.TEST_USER_PASSWORD;
+
+  assert(email, 'TEST_USER_EMAIL environment variable is not set');
+  assert(password, 'TEST_USER_PASSWORD environment variable is not set');
 
   test('Sign in with valid credentials', async ({ page }) => {
     await new Home(page).visit().then(async (homePage) => {

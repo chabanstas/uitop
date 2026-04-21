@@ -13,5 +13,7 @@ services:
     environment:
       - CI=true
       - BASE_URL=${BASE_URL}
+      - TEST_USER_EMAIL=${TEST_USER_EMAIL}
+      - TEST_USER_PASSWORD=${TEST_USER_PASSWORD}
     volumes:
       - ./playwright-report:/app/playwright-report

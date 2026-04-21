@@ -5,7 +5,7 @@ import Flash from 'e2e/pages/Flash';
 import { users } from 'fixtures/fixtures';
 
 test.describe('Sign In', () => {
-  test.describe.configure({ mode: 'serial' });
+  // test.describe.configure({ mode: 'serial' });
   const email = process.env.TEST_USER_EMAIL || '';
   const password = process.env.TEST_USER_PASSWORD || '';
 

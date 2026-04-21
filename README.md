@@ -1,6 +1,6 @@
 # UITop – Playwright Test Automation Suite
 
-Automated test suite built with **Playwright** and **TypeScript**, covering API testing scenarios against [AutomationExercise](https://automationexercise.com/api_list).
+Automated test suite built with **Playwright** and **TypeScript**, covering E2E and API testing.
 
 ---
 
@@ -8,16 +8,27 @@ Automated test suite built with **Playwright** and **TypeScript**, covering API 
 
 ```
 uitop/
-├── tests/
-│   └── api/
+├── api/
+│   └── tests/
 │       ├── createAccount.spec.ts   # POST /createAccount – register & lifecycle tests
 │       └── verifyLogin.spec.ts     # POST /verifyLogin – auth validation tests
+├── e2e/
+│   ├── pages/                      # Page Object Models
+│   └── tests/
+│       ├── signIn.spec.ts          # Sign in flow
+│       └── projects.spec.ts        # Projects flow
 ├── fixtures/
-│   └── apiUsers.ts                 # Factory functions for valid/invalid user payloads
+│   ├── apiUsers.ts                 # Factory functions for valid/invalid user payloads
+│   └── fixtures.ts                 # Shared Playwright fixtures
 ├── utils/
 │   └── apiHelpers.ts               # Shared response assertion helper
+├── Dockerfile                      # API tests image (node:24-alpine)
+├── Dockerfile.e2e                  # E2E tests image (mcr.microsoft.com/playwright)
+├── docker-compose.yml
 ├── playwright.config.ts
-└── .github/workflows/playwright.yml
+└── .github/workflows/
+    ├── playwright.yml              # Node-based CI (API + E2E)
+    └── docker.yml                  # Docker-based CI (API + E2E)
 ```
 
 ---
@@ -26,6 +37,7 @@ uitop/
 
 - [Node.js](https://nodejs.org/) v24+ (see `.nvmrc`)
 - npm v9+
+- Docker & Docker Compose (optional, for containerized runs)
 
 ---
 
@@ -36,13 +48,24 @@ uitop/
 npm ci
 ```
 
-No browser binaries are needed — API tests use Playwright's `request` context only.
+```bash
+# Copy .env.example and update values
+cp .env.example .env
+```
 
 ---
 
 ## Running Tests Locally
 
-### API tests only (recommended)
+### E2E tests
+
+```bash
+npm run test:e2e
+```
+
+Requires `BASE_URL` to be set in `.env`.
+
+### API tests
 
 ```bash
 npm run test:api
@@ -57,32 +80,16 @@ npm run test:all
 ### With HTML report
 
 ```bash
-npm run test:api
 npx playwright show-report
 ```
 
 ---
 
-## Test Coverage
+## Mobile Testing
 
-### `POST /createAccount` — [createAccount.spec.ts](tests/api/createAccount.spec.ts)
+> **Status: in progress — currently unavailable.**
 
-| TC | Description | Expected |
-|----|-------------|----------|
-| TC-1 | Register a new user, verify login, delete account, confirm deletion | `201 User created!` → `200 User exists!` → `200 Account deleted!` → `404 not found` |
-| TC-2 | Create account with missing required fields (only `name` provided) | `400 Bad request` |
-
-Each test generates a unique user via `generateValidUser()` (faker-based). An `afterEach` hook deletes the test user to keep the environment clean.
-
----
-
-### `POST /verifyLogin` — [verifyLogin.spec.ts](tests/api/verifyLogin.spec.ts)
-
-| TC | Description | Expected |
-|----|-------------|----------|
-| TC-3 | POST with missing `email` parameter | `400 Bad request, email or password parameter is missing in POST request.` |
-| TC-4 | DELETE method on `/verifyLogin` endpoint | `405 This request method is not supported.` |
-| TC-5 | POST with invalid (random) email and password | `404 User not found!` |
+Mobile viewport coverage (Pixel 5, iPhone 13, iPad Mini) is planned but not yet active. The project configurations are scaffolded in `playwright.config.ts` and will be enabled once the required POMs and dual-locator support are in place.
 
 ---
 
@@ -90,15 +97,32 @@ Each test generates a unique user via `generateValidUser()` (faker-based). An `a
 
 Run tests in an isolated, reproducible container without installing Node locally.
 
-```bash
-# Build image and run tests
-docker compose up --build
+### API tests
 
-# View the HTML report after tests finish
-npx playwright show-report
+```bash
+docker compose up --build api-tests
 ```
 
-The container installs dependencies, runs `npm run test:api`, and exits. The HTML report is written to `./playwright-report` on your machine via a volume mount.
+### E2E tests
+
+```bash
+docker compose up --build e2e-tests
+```
+
+Requires `BASE_URL` to be set in your shell or a `.env` file:
+
+```bash
+BASE_URL=https://your-app.com docker compose up --build e2e-tests
+```
+
+### Rerun without rebuilding
+
+```bash
+docker compose run --rm e2e-tests
+docker compose run --rm api-tests
+```
+
+The HTML report is written to `./playwright-report` on your machine via a volume mount.
 
 ---
 
@@ -112,18 +136,21 @@ Runs on every push and pull request to `main`/`master`.
 
 | Job | Description |
 |-----|-------------|
-| `test` | Builds the Docker image and runs `npm run test:api` inside the container |
-| `deploy` | Publishes the Playwright HTML report to GitHub Pages (push to `main`/`master` only) |
+| `api-tests` | Builds the API Docker image and runs `npm run test:api` inside the container |
+| `e2e-tests` | Builds the E2E Docker image and runs `npm run test:e2e` inside the container |
 
-The live report is available at your repository's GitHub Pages URL after each push to the main branch.
-
-### Node workflow (legacy)
+### Node workflow
 
 **Workflow:** [.github/workflows/playwright.yml](.github/workflows/playwright.yml)
 
-Runs tests directly on the runner (no Docker). Uploads the HTML report as a workflow artifact retained for 30 days.
+Runs tests directly on the GitHub Actions runner (no Docker).
 
-The E2E browser job is scaffolded in the workflow but currently disabled — the staging environment is not available for automated UI testing at this time.
+| Job | Description |
+|-----|-------------|
+| `api-tests` | Installs deps and runs API tests |
+| `e2e` | Installs Chromium and runs E2E tests |
+
+Both workflows upload the Playwright HTML report as a workflow artifact retained for 30 days. `BASE_URL` must be configured as a repository secret for E2E jobs.
 
 ---
 

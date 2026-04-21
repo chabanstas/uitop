@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "ignoreDeprecations": "6.0",
     "strict": true,
     "types": ["node"],
     "paths": {
       "fixtures/*": ["./fixtures/*"],
       "utils/*": ["./utils/*"],
-      "api/*": ["./tests/api/*"]
+      "api/*": ["./api/*"],
+      "e2e/*": ["./e2e/*"]
     }
   }
 }

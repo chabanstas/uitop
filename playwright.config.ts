@@ -1,26 +1,17 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
+const baseURL = process.env.BASE_URL;
+const timeout = 30000;
 export default defineConfig({
-  testDir: './tests',
-  /* Run tests in files in parallel */
+  testDir: '.',
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 1 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  retries: 1,
+  workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 3,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['line'], ['html', { open: 'never' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -35,9 +26,15 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'e2e',
+      testMatch: 'e2e/**/*.spec.ts',
       testIgnore: '**/api/**',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        baseURL,
+        screenshot: 'only-on-failure',
+        actionTimeout: timeout / 4,
+        ...devices['Desktop Chrome'],
+      },
     },
 
     // {
@@ -51,23 +48,33 @@ export default defineConfig({
     // },
 
     /* Test against mobile viewports. */
+    // Commented as require additional POMs or double locators to handle mobile elements
     // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
+    //   name: 'Mobile Chrome - Pixel 5',
+    //   testMatch: 'e2e/**/*.spec.ts',
+    //   use: {
+    //     baseURL,
+    //     screenshot: 'only-on-failure',
+    //     ...devices['Pixel 5'],
+    //   },
     // },
     // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
+    //   name: 'Mobile Safari - iPhone 13',
+    //   testMatch: 'e2e/**/*.spec.ts',
+    //   use: {
+    //     baseURL,
+    //     screenshot: 'only-on-failure',
+    //     ...devices['iPhone 13'],
+    //   },
     // },
-
-    /* Test against branded browsers. */
     // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    //   name: 'Tablet Safari - iPad Mini',
+    //   testMatch: 'e2e/**/*.spec.ts',
+    //   use: {
+    //     baseURL,
+    //     screenshot: 'only-on-failure',
+    //     ...devices['iPad Mini'],
+    //   },
     // },
 
     {

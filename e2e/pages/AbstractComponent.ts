@@ -37,7 +37,6 @@ export async function waitForResponse(
 // e.g. tables, modals, etc.
 export type Scope = Page | Locator;
 export default abstract class AbstractComponent {
-  protected name: string;
   expect = expect;
   public locator: Locator;
   page: Page; // for cases when we need to access the page directly
@@ -48,12 +47,6 @@ export default abstract class AbstractComponent {
     scope: Scope,
     protected selector: string
   ) {
-    this.name = selector // TODO: ??
-      .replace('$', '')
-      .replace(/_/g, ' ')
-      .replace(/-/g, ' ')
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .toLowerCase();
     this.selector = selector;
     this.locator = scope.locator(this.selector);
     this.page = this.locator.page();
@@ -66,7 +59,6 @@ export default abstract class AbstractComponent {
     hasNot?: Locator;
   }): this {
     this.locator = this.locator.filter(options);
-    this.name = `${this.name} that ${JSON.stringify(options)}`;
     return this;
   }
 
@@ -135,7 +127,6 @@ export default abstract class AbstractComponent {
 
   nth(nth: number) {
     this.locator = this.locator.nth(nth);
-    this.name = `${this.name} index: ${nth}`;
     return this;
   }
 }

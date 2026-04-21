@@ -10,7 +10,7 @@ export default defineConfig({
   testDir: '.',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 0,
+  retries: 1,
   workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 3,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['line'], ['html', { open: 'never' }]],

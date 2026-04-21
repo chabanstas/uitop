@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "Automated test suite built with **Playwright** and **TypeScript**, covering UI and API testing scenarios.",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test:api": "playwright test --project=api",
-    "test:e2e": "playwright test --project=chromium --project=firefox --project=webkit",
+    "test:e2e": "playwright test --project=e2e",
+    "test:mobile": "playwright test --project=\"Mobile Chrome - Pixel 5\" --project=\"Mobile Safari - iPhone 13\" --project=\"Tablet Safari - iPad Mini\"",
     "test:all": "playwright test"
   },
   "keywords": [],
@@ -14,12 +14,15 @@
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@faker-js/faker": "^10.4.0",
+    "@faker-js/faker": "^8.4.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.1",
     "globals": "^17.5.0",
     "prettier": "3.8.3",
     "typescript-eslint": "^8.58.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1"
   }
 }

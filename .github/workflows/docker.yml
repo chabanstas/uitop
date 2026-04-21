@@ -37,8 +37,13 @@ jobs:
 
       - name: Verify BASE_URL is set
         run: |
+          echo "BASE_URL value: '$BASE_URL'"
           if [ -z "$BASE_URL" ]; then
             echo "ERROR: BASE_URL secret is not set or empty"
+            exit 1
+          fi
+          if [[ "$BASE_URL" != http://* ]] && [[ "$BASE_URL" != https://* ]]; then
+            echo "ERROR: BASE_URL does not start with http:// or https:// — check for surrounding quotes in the secret value"
             exit 1
           fi
         env:

@@ -5,3 +5,13 @@ services:
       - CI=true
     volumes:
       - ./playwright-report:/app/playwright-report
+
+  e2e-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    environment:
+      - CI=true
+      - BASE_URL=${BASE_URL}
+    volumes:
+      - ./playwright-report:/app/playwright-report

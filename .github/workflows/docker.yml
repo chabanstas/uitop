@@ -30,9 +30,19 @@ jobs:
     name: Run E2E Tests in Docker
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    environment: staging
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify BASE_URL is set
+        run: |
+          if [ -z "$BASE_URL" ]; then
+            echo "ERROR: BASE_URL secret is not set or empty"
+            exit 1
+          fi
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
 
       - name: Build and run E2E tests
         run: docker compose up --build --exit-code-from e2e-tests e2e-tests
